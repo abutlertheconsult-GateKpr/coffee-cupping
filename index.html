@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coffee Cupping — Professional Scoresheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EFE0;
+    --parchment: #EDE3CC;
+    --espresso: #1A0E06;
+    --roast: #3D1F0A;
+    --caramel: #B5712A;
+    --gold: #C8922A;
+    --rust: #8B3A10;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--espresso);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(61,31,10,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,58,16,0.3) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    font-family: 'DM Mono', monospace;
+    color: var(--cream);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  .page { max-width: 860px; margin: 0 auto; animation: fadeUp 0.8s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HEADER */
+  .header { display: grid; grid-template-columns: 1fr auto; align-items: end; border-bottom: 1px solid var(--caramel); padding-bottom: 20px; margin-bottom: 24px; gap: 16px; }
+  .eyebrow { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--caramel); margin-bottom: 6px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px,5vw,48px); font-weight: 400; line-height: 1; color: var(--cream); }
+  h1 em { font-style: italic; color: var(--gold); }
+  .sca-badge { background: var(--roast); border: 1px solid var(--caramel); border-radius: 4px; padding: 8px 14px; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); white-space: nowrap; }
+
+  /* TESTER */
+  .tester-wrap { margin-bottom: 20px; }
+  .tester-wrap .lbl { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); margin-bottom: 4px; }
+  .tester-wrap input { background: transparent; border: none; border-bottom: 1px solid rgba(181,113,42,0.5); color: var(--cream); font-family: 'Playfair Display', serif; font-style: italic; font-size: 20px; padding: 6px 0; outline: none; width: 100%; max-width: 420px; transition: border-color 0.2s; }
+  .tester-wrap input:focus { border-bottom-color: var(--gold); }
+
+  /* TABS */
+  .tab-nav { display: flex; gap: 0; margin-bottom: 36px; border-bottom: 1px solid var(--caramel); }
+  .tab-btn { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,239,224,0.4); background: transparent; border: none; border-bottom: 2px solid transparent; padding: 10px 20px 10px 0; margin-bottom: -1px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+  .tab-btn:hover { color: var(--cream); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeUp 0.4s ease both; }
+
+  /* META */
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 36px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); }
+  .field input, .field select { background: transparent; border: none; border-bottom: 1px solid rgba(181,113,42,0.4); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 13px; padding: 6px 0; outline: none; transition: border-color 0.2s; width: 100%; }
+  .field input:focus, .field select:focus { border-bottom-color: var(--gold); }
+  .field select option { background: var(--roast); }
+
+  /* SECTION LABEL */
+  .section-label { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--caramel); border-top: 1px solid rgba(181,113,42,0.25); padding-top: 8px; margin: 32px 0 16px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(181,113,42,0.15); }
+
+  /* SCORE ROWS */
+  .score-row { padding: 12px 0; border-bottom: 1px solid rgba(245,239,224,0.05); animation: fadeUp 0.6s ease both; }
+  .score-row:nth-child(1){animation-delay:0.05s} .score-row:nth-child(2){animation-delay:0.10s}
+  .score-row:nth-child(3){animation-delay:0.15s} .score-row:nth-child(4){animation-delay:0.20s}
+  .score-row:nth-child(5){animation-delay:0.25s} .score-row:nth-child(6){animation-delay:0.30s}
+  .score-row:nth-child(7){animation-delay:0.35s} .score-row:nth-child(8){animation-delay:0.40s}
+  .score-row:nth-child(9){animation-delay:0.45s}
+
+  .score-row-top { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .attr-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .attr-name { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+  .attr-subtitle { font-size: 10px; color: rgba(245,239,224,0.38); font-style: italic; letter-spacing: 0; text-transform: none; }
+
+  /* TOOLTIP BUTTON */
+  .tip-btn { width: 16px; height: 16px; border-radius: 50%; background: rgba(181,113,42,0.2); border: 1px solid rgba(181,113,42,0.45); color: var(--caramel); font-size: 9px; font-family: 'DM Mono', monospace; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; line-height: 1; }
+  .tip-btn:hover { background: rgba(181,113,42,0.45); color: var(--cream); }
+
+  /* TOOLTIP BOX */
+  .tooltip-box { display: none; background: #250f04; border: 1px solid rgba(181,113,42,0.45); border-radius: 6px; padding: 14px 16px; margin: 0 0 10px; font-size: 11px; line-height: 1.7; color: rgba(245,239,224,0.72); }
+  .tooltip-box.open { display: block; animation: fadeUp 0.2s ease both; }
+  .tooltip-box .tip-title { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 7px; }
+  .tooltip-box .tip-body { margin-bottom: 10px; }
+  .tooltip-scale { border-top: 1px solid rgba(181,113,42,0.18); padding-top: 8px; display: flex; flex-direction: column; gap: 3px; }
+  .ts-row { display: grid; grid-template-columns: 38px 1fr; gap: 8px; font-size: 10px; }
+  .ts-num { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 13px; line-height: 1.4; }
+  .ts-desc { color: rgba(245,239,224,0.55); }
+
+  /* SCORE VALUE */
+  .score-val-wrap { text-align: right; min-width: 80px; }
+  .score-val { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--gold); line-height: 1; }
+  .score-label-text { font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,239,224,0.35); margin-top: 2px; }
+
+  /* SLIDER */
+  .slider-with-poles { }
+  .poles { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .pole { font-size: 9px; letter-spacing: 0.04em; color: rgba(181,113,42,0.55); }
+  .slider { -webkit-appearance: none; appearance: none; width: 100%; height: 2px; background: rgba(181,113,42,0.2); border-radius: 2px; outline: none; cursor: pointer; }
+  .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); border: 2px solid var(--espresso); box-shadow: 0 0 0 1px var(--caramel); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .slider::-webkit-slider-thumb:hover { transform: scale(1.3); box-shadow: 0 0 8px var(--gold), 0 0 0 1px var(--caramel); }
+  .slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); border: 2px solid var(--espresso); cursor: pointer; }
+
+  /* DEFECTS */
+  .defect-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .defect-group label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); display: block; margin-bottom: 6px; }
+  .defect-input { background: transparent; border: none; border-bottom: 1px solid rgba(181,113,42,0.4); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 13px; padding: 6px 0; outline: none; width: 100%; }
+  .defect-hint { font-size: 10px; color: rgba(245,239,224,0.3); margin-top: 3px; font-style: italic; }
+
+  /* NOTES */
+  .notes-area { background: rgba(245,239,224,0.03); border: 1px solid rgba(181,113,42,0.2); border-radius: 4px; padding: 16px; margin-bottom: 12px; }
+  .notes-area label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); display: block; margin-bottom: 8px; }
+  .notes-area textarea { background: transparent; border: none; color: var(--cream); font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; line-height: 1.7; width: 100%; resize: vertical; min-height: 80px; outline: none; }
+  .notes-area textarea::placeholder { color: rgba(245,239,224,0.2); }
+
+  /* FLAVOR TAGS */
+  .flavor-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(181,113,42,0.35); border-radius: 2px; padding: 4px 10px; cursor: pointer; color: rgba(245,239,224,0.5); transition: all 0.15s; user-select: none; }
+  .tag:hover { color: var(--cream); border-color: var(--caramel); }
+  .tag.active { background: var(--caramel); border-color: var(--caramel); color: var(--espresso); font-weight: 500; }
+  .tag.custom { border-style: dashed; }
+
+  /* CUSTOM TAG INPUT */
+  .custom-note-row { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
+  .custom-note-row input { background: transparent; border: none; border-bottom: 1px solid rgba(181,113,42,0.35); color: var(--cream); font-family: 'DM Mono', monospace; font-size: 12px; padding: 5px 0; outline: none; flex: 1; transition: border-color 0.2s; }
+  .custom-note-row input:focus { border-bottom-color: var(--gold); }
+  .custom-note-row input::placeholder { color: rgba(245,239,224,0.25); }
+  .add-tag-btn { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; background: transparent; border: 1px solid rgba(181,113,42,0.4); color: var(--caramel); padding: 6px 14px; border-radius: 2px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .add-tag-btn:hover { background: rgba(181,113,42,0.15); color: var(--cream); }
+  .custom-hint { font-size: 9px; color: rgba(245,239,224,0.25); margin-bottom: 24px; font-style: italic; }
+
+  /* TOTAL */
+  .total-bar { background: var(--roast); border: 1px solid var(--caramel); border-radius: 6px; padding: 28px 32px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px; margin-top: 36px; position: relative; overflow: hidden; }
+  .total-bar::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 0% 50%, rgba(200,146,42,0.1), transparent 60%); pointer-events: none; }
+  .grade-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--caramel); margin-bottom: 6px; }
+  .grade-desc { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--cream); }
+  .grade-sub { font-size: 11px; color: rgba(245,239,224,0.4); margin-top: 4px; }
+  .total-score-wrap { text-align: right; }
+  .total-num { font-family: 'Playfair Display', serif; font-size: 64px; line-height: 1; color: var(--gold); letter-spacing: -2px; }
+  .total-denom { font-size: 11px; color: var(--caramel); letter-spacing: 0.15em; text-transform: uppercase; }
+  .progress-track { height: 2px; background: rgba(181,113,42,0.15); border-radius: 2px; margin-top: 12px; max-width: 300px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--caramel), var(--gold)); border-radius: 2px; transition: width 0.3s ease; }
+
+  /* ACTIONS */
+  .actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; padding: 12px 24px; border-radius: 3px; cursor: pointer; border: 1px solid var(--caramel); transition: all 0.2s; }
+  .btn-primary { background: var(--gold); color: var(--espresso); border-color: var(--gold); }
+  .btn-primary:hover { background: var(--caramel); border-color: var(--caramel); box-shadow: 0 0 16px rgba(200,146,42,0.3); }
+  .btn-secondary { background: transparent; color: var(--cream); }
+  .btn-secondary:hover { background: rgba(181,113,42,0.15); }
+
+  /* INSTRUCTIONS */
+  .instr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  @media (max-width: 600px) { .instr-grid { grid-template-columns: 1fr; } }
+  .instr-card { background: rgba(245,239,224,0.03); border: 1px solid rgba(181,113,42,0.2); border-radius: 4px; padding: 18px 20px; }
+  .instr-card-num { font-family: 'Playfair Display', serif; font-size: 32px; color: rgba(200,146,42,0.25); line-height: 1; margin-bottom: 6px; }
+  .instr-card-title { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .instr-card-body { font-size: 12px; line-height: 1.7; color: rgba(245,239,224,0.65); }
+  .instr-card-body strong { color: var(--cream); font-weight: 500; }
+  .score-scale { background: rgba(245,239,224,0.03); border: 1px solid rgba(181,113,42,0.2); border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+  .score-scale-title { font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--caramel); margin-bottom: 14px; }
+  .scale-row { display: grid; grid-template-columns: 50px 140px 1fr; gap: 12px; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(245,239,224,0.04); font-size: 12px; }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-num { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); }
+  .scale-grade { color: var(--cream); font-size: 11px; letter-spacing: 0.05em; }
+  .scale-desc { color: rgba(245,239,224,0.45); font-size: 11px; font-style: italic; }
+  .instr-tip { background: rgba(200,146,42,0.07); border-left: 2px solid var(--caramel); padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 11px; color: rgba(245,239,224,0.6); line-height: 1.6; margin-top: 16px; }
+  .instr-tip strong { color: var(--caramel); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .defect-grid { grid-template-columns: 1fr; }
+    .total-bar { grid-template-columns: 1fr; }
+    .total-score-wrap { text-align: left; }
+  }
+
+  /* MODALS */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(10,4,1,0.82);
+    z-index: 100;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: #2A1208;
+    border: 1px solid var(--caramel);
+    border-radius: 8px;
+    padding: 28px 32px;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    animation: fadeUp 0.25s ease both;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+
+  .modal-sub {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 20px;
+  }
+
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: transparent; border: none;
+    color: rgba(245,239,224,0.4); font-size: 18px;
+    cursor: pointer; line-height: 1;
+    transition: color 0.15s;
+  }
+  .modal-close:hover { color: var(--cream); }
+
+  .share-url-row { display: flex; gap: 8px; align-items: stretch; margin-bottom: 12px; }
+  .share-url-box {
+    flex: 1;
+    background: rgba(245,239,224,0.05);
+    border: 1px solid rgba(181,113,42,0.35);
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245,239,224,0.6);
+    word-break: break-all;
+    line-height: 1.5;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+  .copy-url-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--espresso);
+    border: none;
+    border-radius: 3px;
+    padding: 8px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .copy-url-btn:hover { background: var(--caramel); }
+  .copy-url-btn.copied { background: #4a7c40; color: white; }
+
+  .modal-note {
+    font-size: 10px;
+    color: rgba(245,239,224,0.35);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* QR modal */
+  .qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  #qrCanvas {
+    border-radius: 6px;
+    background: white;
+    padding: 12px;
+  }
+  .qr-note {
+    font-size: 10px;
+    color: rgba(245,239,224,0.4);
+    text-align: center;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* PRINT — preserve dark background exactly as shown on screen */
+  @media print {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+
+    body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      background-color: var(--espresso) !important;
+      color: var(--cream) !important;
+      padding: 12px !important;
+    }
+
+    .page { max-width: 100% !important; }
+
+    /* Hide interactive-only elements */
+    .btn, .tab-nav, .tip-btn, .tooltip-box,
+    .custom-note-row, .custom-hint,
+    #shareModal, #qrModal { display: none !important; }
+
+    /* Show only scoresheet tab */
+    .tab-panel { display: none !important; }
+    #tab-scoresheet { display: block !important; }
+
+    /* Keep all colors intact */
+    h1, .grade-desc { color: var(--cream) !important; }
+    h1 em { color: var(--gold) !important; }
+    .total-num { color: var(--gold) !important; }
+    .total-bar { background: var(--roast) !important; border-color: var(--caramel) !important; }
+    .sca-badge { background: var(--roast) !important; }
+    .slider { background: rgba(181,113,42,0.3) !important; }
+    .score-val { color: var(--gold) !important; }
+    .section-label { color: var(--caramel) !important; }
+    .attr-name { color: var(--cream) !important; }
+    .notes-area { background: rgba(245,239,224,0.03) !important; border-color: rgba(181,113,42,0.2) !important; }
+    .tag.active { background: var(--caramel) !important; color: var(--espresso) !important; }
+    .progress-fill { background: linear-gradient(90deg, var(--caramel), var(--gold)) !important; }
+
+    /* Page break hints */
+    .score-row { page-break-inside: avoid; }
+    .total-bar { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="eyebrow">&#9749; Professional Evaluation</div>
+      <h1>Coffee <em>Cupping</em><br>Scoresheet</h1>
+    </div>
+    <div class="sca-badge">SCA Protocol<br>v2.0 Standard</div>
+  </div>
+
+  <!-- TESTER NAME -->
+  <div class="tester-wrap">
+    <div class="lbl">Tester Name</div>
+    <input type="text" id="testerName" placeholder="Enter your full name">
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('scoresheet',this)">Scoresheet</button>
+    <button class="tab-btn" onclick="switchTab('instructions',this)">Instructions</button>
+  </div>
+
+  <!-- ══ SCORESHEET TAB ══ -->
+  <div class="tab-panel active" id="tab-scoresheet">
+
+    <div class="meta-grid">
+      <div class="field"><label>Sample / Bean ID</label><input type="text" placeholder="e.g. ETH-YRG-001" id="beanId"></div>
+      <div class="field"><label>Origin</label><input type="text" placeholder="Country / Region" id="origin"></div>
+      <div class="field">
+        <label>Process</label>
+        <select id="process">
+          <option value="">&#8212; Select &#8212;</option>
+          <option>Washed</option><option>Natural</option><option>Honey</option>
+          <option>Anaerobic</option><option>Wet-Hulled</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Roast Level</label>
+        <select id="roastLevel">
+          <option value="">&#8212; Select &#8212;</option>
+          <option>Light</option><option>Light-Medium</option><option>Medium</option>
+          <option>Medium-Dark</option><option>Dark</option>
+        </select>
+      </div>
+      <div class="field"><label>Roast Date</label><input type="date" id="roastDate"></div>
+      <div class="field"><label>Test Date</label><input type="date" id="cupDate"></div>
+      <div class="field">
+        <label>Brew Method</label>
+        <select id="brewMethod">
+          <option value="">&#8212; Select &#8212;</option>
+          <option>Cupping (Open Bowl)</option><option>V60 Pour Over</option>
+          <option>Chemex</option><option>Drip / Filter</option><option>French Press</option>
+          <option>AeroPress</option><option>Moka Pot</option><option>Espresso</option>
+          <option>Cold Brew</option><option>Siphon</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Grind Weight (g)</label><input type="number" placeholder="8.25" id="grindWeight" step="0.01"></div>
+      <div class="field"><label>Water Temp (&#176;F)</label><input type="number" placeholder="200" id="waterTemp"></div>
+      <div class="field"><label>Session Ref</label><input type="text" placeholder="Cupper / batch ref" id="cupper"></div>
+    </div>
+
+    <!-- FLAVOR TAGS -->
+    <div class="section-label">Detected Flavor Notes</div>
+    <div class="flavor-tags" id="flavorTags">
+      <span class="tag" onclick="toggleTag(this)">Blueberry</span>
+      <span class="tag" onclick="toggleTag(this)">Blackcurrant</span>
+      <span class="tag" onclick="toggleTag(this)">Citrus</span>
+      <span class="tag" onclick="toggleTag(this)">Lemon Zest</span>
+      <span class="tag" onclick="toggleTag(this)">Stone Fruit</span>
+      <span class="tag" onclick="toggleTag(this)">Red Berry</span>
+      <span class="tag" onclick="toggleTag(this)">Tropical</span>
+      <span class="tag" onclick="toggleTag(this)">Jasmine</span>
+      <span class="tag" onclick="toggleTag(this)">Rose</span>
+      <span class="tag" onclick="toggleTag(this)">Dark Chocolate</span>
+      <span class="tag" onclick="toggleTag(this)">Milk Chocolate</span>
+      <span class="tag" onclick="toggleTag(this)">Caramel</span>
+      <span class="tag" onclick="toggleTag(this)">Brown Sugar</span>
+      <span class="tag" onclick="toggleTag(this)">Honey</span>
+      <span class="tag" onclick="toggleTag(this)">Vanilla</span>
+      <span class="tag" onclick="toggleTag(this)">Hazelnut</span>
+      <span class="tag" onclick="toggleTag(this)">Almond</span>
+      <span class="tag" onclick="toggleTag(this)">Cedar</span>
+      <span class="tag" onclick="toggleTag(this)">Tobacco</span>
+      <span class="tag" onclick="toggleTag(this)">Earthy</span>
+      <span class="tag" onclick="toggleTag(this)">Spice</span>
+      <span class="tag" onclick="toggleTag(this)">Fermented</span>
+      <span class="tag" onclick="toggleTag(this)">Green / Vegetal</span>
+      <span class="tag" onclick="toggleTag(this)">Rubber</span>
+    </div>
+    <div class="custom-note-row">
+      <input type="text" id="customTagInput" placeholder="Don't see your note? Type it here..." onkeydown="if(event.key==='Enter')addCustomTag()">
+      <button class="add-tag-btn" onclick="addCustomTag()">+ Add Note</button>
+    </div>
+    <div class="custom-hint">Custom tags are shown with a dashed border. Double-click any custom tag to remove it.</div>
+
+    <!-- SCORING -->
+    <div class="section-label">Attribute Scores <span style="color:rgba(245,239,224,0.3);font-size:9px;margin-left:8px;">(1 = Unacceptable &rarr; 10 = Extraordinary)</span></div>
+    <div id="scoreRows"></div>
+
+    <!-- DEFECTS -->
+    <div class="section-label">Defects</div>
+    <div class="defect-grid">
+      <div class="defect-group">
+        <label>Taint Cups &times; 2pts each</label>
+        <input class="defect-input" type="number" id="taintCups" min="0" placeholder="0" oninput="calcTotal()">
+        <div class="defect-hint">Mild off-flavors (musty, rubbery, papery)</div>
+      </div>
+      <div class="defect-group">
+        <label>Fault Cups &times; 4pts each</label>
+        <input class="defect-input" type="number" id="faultCups" min="0" placeholder="0" oninput="calcTotal()">
+        <div class="defect-hint">Severe defects (sour, phenolic, ferment)</div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="notes-area">
+      <label>Overall Impressions &amp; Notes</label>
+      <textarea id="notes" placeholder="Describe the cup's character, development, and any observations&#8230;"></textarea>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-bar">
+      <div>
+        <div class="grade-label">Final Grade</div>
+        <div class="grade-desc" id="gradeDesc">&#8212;</div>
+        <div class="grade-sub" id="gradeSub">Adjust sliders to reveal grade</div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <div class="total-score-wrap">
+        <div class="total-num" id="totalScore">&#8212;</div>
+        <div class="total-denom">/ 100</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="printSheet()">&#9633; Save as PDF</button>
+      <button class="btn btn-secondary" onclick="openShareModal()">&#8679; Share Link</button>
+      <button class="btn btn-secondary" onclick="openQRModal()">&#9638; QR Code</button>
+      <button class="btn btn-secondary" onclick="resetAll()">&#8635; Reset</button>
+      <button class="btn btn-secondary" onclick="copyResults()">&#8998; Copy Results</button>
+    </div>
+
+  </div><!-- /tab-scoresheet -->
+
+  <!-- ══ INSTRUCTIONS TAB ══ -->
+  <div class="tab-panel" id="tab-instructions">
+
+    <div class="section-label" style="margin-top:0;">What is Cupping?</div>
+    <p style="font-size:13px;color:rgba(245,239,224,0.65);line-height:1.8;margin-bottom:24px;">
+      Cupping is the universal industry standard for evaluating coffee quality &#8212; used by roasters, green coffee buyers, and Q Graders worldwide. It creates a controlled, repeatable tasting environment so any two people can compare notes on the same bean. The SCA protocol scores coffees on a 100-point scale; <strong style="color:var(--cream);">80+ points = Specialty Grade</strong>.
+    </p>
+
+    <div class="section-label">Step-by-Step Process</div>
+    <div class="instr-grid">
+      <div class="instr-card"><div class="instr-card-num">01</div><div class="instr-card-title">Prepare Your Setup</div><div class="instr-card-body">Use <strong>8.25g of coffee per 150ml</strong> of filtered water. Weigh precisely on a 0.1g scale. You need ceramic cupping bowls (150&#8211;200ml), a burr grinder, a gooseneck kettle, and deep cupping spoons. Prepare at least <strong>3 cups of the same bean</strong> to check consistency.</div></div>
+      <div class="instr-card"><div class="instr-card-num">02</div><div class="instr-card-title">Grind Fresh</div><div class="instr-card-body">Grind <strong>coarser than drip, finer than French press</strong> &#8212; like coarse table salt. Grind immediately before brewing. Let grounds rest 5&#8211;10 minutes before adding water to allow CO&#8322; to off-gas and fragrance to develop.</div></div>
+      <div class="instr-card"><div class="instr-card-num">03</div><div class="instr-card-title">Dry Aroma</div><div class="instr-card-body">Before adding water, <strong>nose the dry grounds closely</strong>. Note fruity, floral, nutty, chocolatey, or spicy notes. This is your first scoring moment: <em>Fragrance</em>. Cup your hand over the bowl to concentrate aromas.</div></div>
+      <div class="instr-card"><div class="instr-card-num">04</div><div class="instr-card-title">Add Water &amp; Bloom</div><div class="instr-card-body">Pour water at <strong>200&#176;F</strong> in a steady circular motion, fully saturating all grounds. Start your timer. A crust will form. Do not disturb it. At <strong>4 minutes</strong>, evaluate the wet aroma before breaking the crust.</div></div>
+      <div class="instr-card"><div class="instr-card-num">05</div><div class="instr-card-title">Break the Crust</div><div class="instr-card-body">At exactly <strong>4 minutes</strong>, push the crust back with three slow strokes. Keep your nose directly over the bowl &#8212; this is the most aromatic moment of the cupping. Score your <em>Aroma</em> impression now.</div></div>
+      <div class="instr-card"><div class="instr-card-num">06</div><div class="instr-card-title">Skim &amp; Wait</div><div class="instr-card-body">Remove foam and floating grounds. Let cool to <strong>&#126;158&#176;F</strong> &#8212; about 8&#8211;10 minutes from pour. Tasting too hot dulls your palate. The ideal tasting window is <strong>149&#8211;113&#176;F</strong>.</div></div>
+      <div class="instr-card"><div class="instr-card-num">07</div><div class="instr-card-title">Taste &amp; Slurp</div><div class="instr-card-body">Load your cupping spoon and <strong>slurp aggressively</strong> &#8212; this aerates the coffee across your entire palate. Don&#8217;t sip politely. Swirl it around your mouth. Spit or swallow. Evaluate: flavor, aftertaste, acidity, body, balance, sweetness.</div></div>
+      <div class="instr-card"><div class="instr-card-num">08</div><div class="instr-card-title">Taste as It Cools</div><div class="instr-card-body">Return to each cup every few minutes as it cools. <strong>Flavors change dramatically</strong> &#8212; acids brighten, sweetness clarifies, defects become more apparent. A great cup stays pleasant even cold.</div></div>
+    </div>
+
+    <div class="section-label">Scoring Scale (1&#8211;10)</div>
+    <div class="score-scale">
+      <div class="score-scale-title">The full 1&#8211;10 scale is used &#8212; 1 is valid and means undrinkable.</div>
+      <div class="scale-row"><div class="scale-num">10</div><div class="scale-grade">Extraordinary</div><div class="scale-desc">Rare, unforgettable complexity</div></div>
+      <div class="scale-row"><div class="scale-num">9</div><div class="scale-grade">Outstanding</div><div class="scale-desc">Remarkable, highly distinct character</div></div>
+      <div class="scale-row"><div class="scale-num">8</div><div class="scale-grade">Excellent</div><div class="scale-desc">Noticeably superior, well-defined quality</div></div>
+      <div class="scale-row"><div class="scale-num">7</div><div class="scale-grade">Very Good</div><div class="scale-desc">Clear positive attributes, above average</div></div>
+      <div class="scale-row"><div class="scale-num">6</div><div class="scale-grade">Good</div><div class="scale-desc">Acceptable &#8212; minimum specialty threshold</div></div>
+      <div class="scale-row"><div class="scale-num">5</div><div class="scale-grade">Fair</div><div class="scale-desc">Below specialty, noticeable weaknesses</div></div>
+      <div class="scale-row"><div class="scale-num">4</div><div class="scale-grade">Poor</div><div class="scale-desc">Significant flaws, clearly unbalanced</div></div>
+      <div class="scale-row"><div class="scale-num">3</div><div class="scale-grade">Bad</div><div class="scale-desc">Pronounced defects, very unpleasant</div></div>
+      <div class="scale-row"><div class="scale-num">2</div><div class="scale-grade">Very Bad</div><div class="scale-desc">Severe defects dominate the cup</div></div>
+      <div class="scale-row"><div class="scale-num">1</div><div class="scale-grade">Unacceptable</div><div class="scale-desc">Undrinkable &#8212; complete failure</div></div>
+    </div>
+
+    <div class="section-label">Final Score Grades</div>
+    <div class="score-scale" style="margin-bottom:16px;">
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">90&#8211;100</div><div class="scale-grade">Outstanding</div><div class="scale-desc">Top 1% of world coffee</div></div>
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">85&#8211;89</div><div class="scale-grade">Excellent</div><div class="scale-desc">Premium specialty, competition-worthy</div></div>
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">80&#8211;84</div><div class="scale-grade">Very Good</div><div class="scale-desc">SCA Specialty Grade certified</div></div>
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">75&#8211;79</div><div class="scale-grade">Good</div><div class="scale-desc">Above commercial, below specialty</div></div>
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">70&#8211;74</div><div class="scale-grade">Fair</div><div class="scale-desc">Commercial grade &#8212; acceptable</div></div>
+      <div class="scale-row" style="grid-template-columns:80px 140px 1fr;"><div class="scale-num" style="font-size:14px;">Below 70</div><div class="scale-grade">Below Standard</div><div class="scale-desc">Significant defects &#8212; not market-ready</div></div>
+    </div>
+
+    <div class="instr-tip">
+      <strong>Pro tip:</strong> Always cup blind when possible &#8212; cover the bean labels until after scoring. Bias is real. Even experienced Q Graders are influenced by origin expectations. Rest roasted beans 8&#8211;24 hours before cupping; freshly roasted coffee is still degassing and will taste flat or grassy.
+    </div>
+
+    <div class="actions" style="margin-top:28px;">
+      <button class="btn btn-primary" onclick="switchTab('scoresheet', document.querySelector('.tab-btn'))">&#8594; Go to Scoresheet</button>
+    </div>
+
+  </div><!-- /tab-instructions -->
+
+</div><!-- /page -->
+
+<script>
+const ATTRIBUTES = [
+  {
+    id: 'fragrance', label: 'Fragrance / Aroma', subtitle: '(Smell)',
+    poleLeft: 'No Scent', poleRight: 'Intoxicating',
+    tip: {
+      title: 'Fragrance / Aroma — What to look for',
+      body: 'Evaluated in two stages: <b>dry</b> (smell the ground coffee before adding water) and <b>wet</b> (nose the bloom and break the crust at 4 min). You are assessing the intensity, complexity, and pleasantness of the smell — not the taste.',
+      scale: [
+        ['10','Layered, complex, intoxicating aroma that fills the room'],
+        ['7–9','Clear, pleasant, identifiable scents — floral, fruit, chocolate, nut'],
+        ['5–6','Mild aroma, hard to identify specific notes'],
+        ['3–4','Flat, faint, or slightly off — mustiness or staleness'],
+        ['1–2','No aroma, or distinctly unpleasant — fermented, rotten, chemical'],
+      ]
+    }
+  },
+  {
+    id: 'flavor', label: 'Flavor', subtitle: '(Taste)',
+    poleLeft: 'Unpleasant', poleRight: 'Exceptional',
+    tip: {
+      title: 'Flavor — What to look for',
+      body: 'The main impression of taste from first sip to swallow. Consider <b>what flavors you detect</b> (fruit, chocolate, nuts, spice), how <b>complex</b> they are, and whether they are pleasant. This is the broadest and most important attribute.',
+      scale: [
+        ['10','Complex, multi-layered — like a symphony of flavors evolving on the palate'],
+        ['7–9','Distinct, pleasant, identifiable — clear fruit, chocolate, or floral notes'],
+        ['5–6','Generic or muted — tastes like coffee but nothing specific stands out'],
+        ['3–4','Off-notes present — flat, bitter, papery, or slightly sour'],
+        ['1–2','Unpleasant dominant flavors — harsh, astringent, chemical, or rotten'],
+      ]
+    }
+  },
+  {
+    id: 'aftertaste', label: 'Aftertaste', subtitle: '(Finish)',
+    poleLeft: 'Harsh / Gone', poleRight: 'Long & Clean',
+    tip: {
+      title: 'Aftertaste — What to look for',
+      body: 'The <b>length and quality of flavor remaining after you swallow or spit</b>. A long, pleasant aftertaste is a hallmark of quality coffee. A short or unpleasant finish brings the score down significantly.',
+      scale: [
+        ['10','Very long, complex finish — flavors evolve for 30+ seconds'],
+        ['7–9','Clean, pleasant finish lasting 10–20 seconds'],
+        ['5–6','Fades quickly — 5 seconds or less, fairly neutral'],
+        ['3–4','Slightly bitter, dry, or astringent finish lingers unpleasantly'],
+        ['1–2','Harsh, chemical, or medicinal aftertaste'],
+      ]
+    }
+  },
+  {
+    id: 'acidity', label: 'Acidity', subtitle: '(Brightness)',
+    poleLeft: 'Flat / Dull', poleRight: 'Bright & Lively',
+    tip: {
+      title: 'Acidity — What to look for',
+      body: '<b>Acidity is brightness, not sourness.</b> Good acidity makes coffee feel alive and refreshing — like biting into a crisp apple. Bad acidity is sharp and vinegary. Judge the <em>quality</em> of the acidity, not just the intensity.',
+      scale: [
+        ['10','Vibrant, juicy, wine-like — elevates all other flavors'],
+        ['7–9','Bright and pleasant — lemon, malic (apple), or citric notes'],
+        ['5–6','Mild, present but not distinctive'],
+        ['3–4','Flat with no brightness, OR sharp/sour and unpleasant'],
+        ['1–2','Vinegary, harsh, or fermentation-level sourness'],
+      ]
+    }
+  },
+  {
+    id: 'body', label: 'Body', subtitle: '(Mouthfeel)',
+    poleLeft: 'Watery / Thin', poleRight: 'Rich & Textured',
+    tip: {
+      title: 'Body — What to look for',
+      body: '<b>Body is the physical weight and texture of the coffee in your mouth</b> — not taste, but feel. Move the coffee around your tongue slowly. Is it thin like water? Full like whole milk? Silky, buttery, syrupy, gritty? This is purely a tactile score.',
+      scale: [
+        ['10','Thick, luxurious, syrupy — coats every surface of your mouth'],
+        ['7–9','Full and satisfying — like whole milk or melted butter on the tongue'],
+        ['5–6','Medium body — present but unremarkable, like 2% milk'],
+        ['3–4','Thin and watery — little presence on the palate'],
+        ['1–2','Completely empty or unpleasantly chalky / astringent'],
+      ]
+    }
+  },
+  {
+    id: 'balance', label: 'Balance', subtitle: '(Harmony)',
+    poleLeft: 'One-Dimensional', poleRight: 'Perfectly Balanced',
+    tip: {
+      title: 'Balance — What to look for',
+      body: 'Does the coffee feel <b>harmonious</b>? Are acidity, body, sweetness, and flavor working together — or does one attribute dominate and clash with the others? A very acidic coffee with no sweetness to offset it would score low here, even if its acidity alone was pleasant.',
+      scale: [
+        ['10','Every attribute complements the others perfectly — effortless harmony'],
+        ['7–9','Well-balanced, no single attribute dominates unpleasantly'],
+        ['5–6','Slight imbalance — one note is a bit too strong or too weak'],
+        ['3–4','Noticeably lopsided — very acidic with no sweetness, or bitter with no body'],
+        ['1–2','Completely out of balance — one attribute ruins the whole cup'],
+      ]
+    }
+  },
+  {
+    id: 'sweetness', label: 'Sweetness', subtitle: '(Natural Sugar)',
+    poleLeft: 'None / Harsh', poleRight: 'Naturally Sweet',
+    tip: {
+      title: 'Sweetness — What to look for',
+      body: '<b>This is natural sweetness from the coffee itself — not added sugar.</b> Quality processing and careful roasting preserves the bean\'s natural sugars. It is felt more than tasted — a smooth, round quality that softens other attributes. Sour or harsh coffees often lack sweetness entirely.',
+      scale: [
+        ['10','Rich, caramel-like sweetness that is immediately apparent'],
+        ['7–9','Clear natural sweetness — honey, brown sugar, or fruit sugar notes'],
+        ['5–6','Mild sweetness — present but subtle'],
+        ['3–4','Very little sweetness — slightly harsh or dry on the palate'],
+        ['1–2','No sweetness at all — sharp, sour, or astringent'],
+      ]
+    }
+  },
+  {
+    id: 'uniformity', label: 'Uniformity', subtitle: '(Consistency)',
+    poleLeft: 'Wildly Uneven', poleRight: 'Perfectly Consistent',
+    tip: {
+      title: 'Uniformity — What to look for',
+      body: 'You should be cupping at least <b>3 bowls of the same bean</b>. Uniformity scores how consistent each cup is with the others. If one cup tastes great and another tastes sour or flat, that is a uniformity problem — indicating uneven roasting, processing issues, or contamination.',
+      scale: [
+        ['10','All cups are identical — indistinguishable from one another'],
+        ['7–9','Minor variation between cups, nothing alarming'],
+        ['5–6','Noticeable difference in 1 of 3 cups'],
+        ['3–4','Significant variation — 2 cups noticeably different'],
+        ['1–2','Every cup tastes different — serious quality control failure'],
+      ]
+    }
+  },
+  {
+    id: 'overall', label: 'Overall', subtitle: '(Your Verdict)',
+    poleLeft: 'Would Not Drink', poleRight: 'Would Seek Out',
+    tip: {
+      title: 'Overall — Your holistic verdict',
+      body: 'This is <b>your personal evaluation</b> of the coffee as a whole experience — beyond the sum of its parts. Does it leave you wanting another cup? Would you recommend it? Did it surprise you in a good way? This score reflects your complete impression as an evaluator.',
+      scale: [
+        ['10','One of the best coffees you have ever had — you would seek it out again'],
+        ['7–9','Genuinely enjoyable, clearly above average, you would buy it'],
+        ['5–6','Decent coffee — you would drink it but not seek it out'],
+        ['3–4','Below expectations — would not purchase again'],
+        ['1–2','Would not finish the cup — unpleasant overall experience'],
+      ]
+    }
+  },
+];
+
+const SCORE_LABELS = {
+  10:'Extraordinary', 9:'Outstanding', 8:'Excellent',
+  7:'Very Good', 6:'Good', 5:'Fair', 4:'Poor',
+  3:'Bad', 2:'Very Bad', 1:'Unacceptable'
+};
+
+function getScoreLabel(v) {
+  return SCORE_LABELS[Math.min(10, Math.max(1, Math.round(v)))] || '';
+}
+
+// BUILD ROWS
+const container = document.getElementById('scoreRows');
+ATTRIBUTES.forEach(attr => {
+  const row = document.createElement('div');
+  row.className = 'score-row';
+
+  const scaleRows = attr.tip.scale.map(([n,d]) =>
+    `<div class="ts-row"><span class="ts-num">${n}</span><span class="ts-desc">${d}</span></div>`
+  ).join('');
+
+  row.innerHTML = `
+    <div class="score-row-top">
+      <div class="attr-header">
+        <span class="attr-name">${attr.label}</span>
+        <span class="attr-subtitle">${attr.subtitle}</span>
+        <button class="tip-btn" onclick="toggleTip('${attr.id}')" title="How to score this">?</button>
+      </div>
+      <div class="score-val-wrap">
+        <div class="score-val" id="${attr.id}Val">5</div>
+        <div class="score-label-text" id="${attr.id}Label">Fair</div>
+      </div>
+    </div>
+    <div class="tooltip-box" id="tip-${attr.id}">
+      <div class="tip-title">${attr.tip.title}</div>
+      <div class="tip-body">${attr.tip.body}</div>
+      <div class="tooltip-scale">${scaleRows}</div>
+    </div>
+    <div class="slider-with-poles">
+      <div class="poles">
+        <span class="pole">${attr.poleLeft}</span>
+        <span class="pole">${attr.poleRight}</span>
+      </div>
+      <input type="range" class="slider" id="${attr.id}" min="1" max="10" step="1" value="5"
+        oninput="updateVal('${attr.id}'); calcTotal()">
+    </div>
+  `;
+  container.appendChild(row);
+});
+
+function updateVal(id) {
+  const v = parseInt(document.getElementById(id).value);
+  document.getElementById(id + 'Val').textContent = v;
+  document.getElementById(id + 'Label').textContent = getScoreLabel(v);
+}
+
+function toggleTip(id) {
+  document.getElementById('tip-' + id).classList.toggle('open');
+}
+
+function calcTotal() {
+  let sum = 0;
+  ATTRIBUTES.forEach(a => { sum += parseInt(document.getElementById(a.id).value); });
+  // Scale: 9 attributes × 10 max = 90 max. Normalize to 100.
+  const rawScore = (sum / 90) * 100;
+  const taint = parseInt(document.getElementById('taintCups').value) || 0;
+  const fault = parseInt(document.getElementById('faultCups').value) || 0;
+  const total = Math.max(0, rawScore - (taint * 2) - (fault * 4));
+
+  document.getElementById('totalScore').textContent = total.toFixed(1);
+
+  let desc = '', sub = '';
+  if (total >= 90)      { desc = 'Outstanding';    sub = 'Exceptional — top 1% of world coffee'; }
+  else if (total >= 85) { desc = 'Excellent';       sub = 'Premium specialty grade'; }
+  else if (total >= 80) { desc = 'Very Good';       sub = 'Specialty grade — SCA certified'; }
+  else if (total >= 75) { desc = 'Good';            sub = 'Above commercial grade'; }
+  else if (total >= 70) { desc = 'Fair';            sub = 'Commercial / below specialty'; }
+  else if (total >= 50) { desc = 'Below Standard'; sub = 'Significant defects present'; }
+  else                  { desc = 'Unacceptable';    sub = 'Not suitable — severe defects'; }
+
+  document.getElementById('gradeDesc').textContent = desc;
+  document.getElementById('gradeSub').textContent = sub;
+  document.getElementById('progressFill').style.width = Math.min(100, total) + '%';
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn && btn.classList) btn.classList.add('active');
+  else document.querySelector('.tab-btn').classList.add('active');
+}
+
+function toggleTag(el) { el.classList.toggle('active'); }
+
+function addCustomTag() {
+  const input = document.getElementById('customTagInput');
+  const val = input.value.trim();
+  if (!val) return;
+  const tag = document.createElement('span');
+  tag.className = 'tag custom active';
+  tag.textContent = val;
+  tag.onclick = function() { this.classList.toggle('active'); };
+  tag.ondblclick = function() { this.remove(); };
+  document.getElementById('flavorTags').appendChild(tag);
+  input.value = '';
+  input.focus();
+}
+
+function resetAll() {
+  if (!confirm('Reset all scores and notes?')) return;
+  ATTRIBUTES.forEach(a => { document.getElementById(a.id).value = 5; updateVal(a.id); });
+  document.querySelectorAll('.tag.active').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#flavorTags .tag.custom').forEach(t => t.remove());
+  document.getElementById('taintCups').value = '';
+  document.getElementById('faultCups').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('testerName').value = '';
+  ['beanId','origin','cupper','grindWeight','waterTemp'].forEach(id => document.getElementById(id).value = '');
+  ['process','roastLevel','brewMethod'].forEach(id => document.getElementById(id).selectedIndex = 0);
+  document.getElementById('roastDate').value = '';
+  document.getElementById('cupDate').valueAsDate = new Date();
+  calcTotal();
+}
+
+function copyResults() {
+  const tags = [...document.querySelectorAll('#flavorTags .tag.active')].map(t => t.textContent).join(', ');
+  const lines = [
+    '── COFFEE CUPPING RESULTS ──',
+    `Tester: ${document.getElementById('testerName').value || '—'}`,
+    `Bean: ${document.getElementById('beanId').value || '—'}`,
+    `Origin: ${document.getElementById('origin').value || '—'}`,
+    `Process: ${document.getElementById('process').value || '—'}`,
+    `Roast Level: ${document.getElementById('roastLevel').value || '—'}`,
+    `Roast Date: ${document.getElementById('roastDate').value || '—'}`,
+    `Test Date: ${document.getElementById('cupDate').value || '—'}`,
+    `Brew Method: ${document.getElementById('brewMethod').value || '—'}`,
+    `Water Temp: ${document.getElementById('waterTemp').value || '—'}°F`,
+    `Session Ref: ${document.getElementById('cupper').value || '—'}`,
+    '',
+    '── SCORES ──',
+    ...ATTRIBUTES.map(a => {
+      const v = parseInt(document.getElementById(a.id).value);
+      return `${a.label}: ${v}/10 (${getScoreLabel(v)})`;
+    }),
+    '',
+    `Flavor Notes: ${tags || '—'}`,
+    `Notes: ${document.getElementById('notes').value || '—'}`,
+    '',
+    `FINAL SCORE: ${document.getElementById('totalScore').textContent} / 100`,
+    `GRADE: ${document.getElementById('gradeDesc').textContent}`,
+  ];
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => alert('Results copied to clipboard!'))
+    .catch(() => alert('Copy failed — please copy manually.'));
+}
+
+// INIT — build display values immediately (rows are already in DOM)
+ATTRIBUTES.forEach(a => updateVal(a.id));
+calcTotal();
+</script>
+<!-- SHARE LINK MODAL -->
+<div class="modal-backdrop" id="shareModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('shareModal')">&times;</button>
+    <div class="modal-title">Share This Sheet</div>
+    <div class="modal-sub">All scores &amp; notes encoded in the link</div>
+    <div class="share-url-row">
+      <div class="share-url-box" id="shareUrlBox">Generating link&hellip;</div>
+      <button class="copy-url-btn" id="copyUrlBtn" onclick="copyShareUrl()">Copy</button>
+    </div>
+    <div class="modal-note">
+      Anyone with this link will see your exact scores, flavor tags, tester name, and notes &#8212; ready to open and review. No account needed.
+    </div>
+  </div>
+</div>
+
+<!-- QR CODE MODAL -->
+<div class="modal-backdrop" id="qrModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('qrModal')">&times;</button>
+    <div class="modal-title">QR Code</div>
+    <div class="modal-sub">Scan to open this scoresheet</div>
+    <div class="qr-wrap">
+      <canvas id="qrCanvas" width="220" height="220"></canvas>
+      <div class="qr-note">
+        Scan with any phone camera to open this exact scoresheet with all your data.<br>
+        <button class="copy-url-btn" style="margin-top:10px;" onclick="downloadQR()">&#8659; Download QR Image</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+// ── STATE SERIALIZATION ───────────────────────────────────────────────────
+
+function gatherState() {
+  const state = {
+    t: document.getElementById('testerName').value,
+    b: document.getElementById('beanId').value,
+    o: document.getElementById('origin').value,
+    pr: document.getElementById('process').value,
+    rl: document.getElementById('roastLevel').value,
+    rd: document.getElementById('roastDate').value,
+    cd: document.getElementById('cupDate').value,
+    bm: document.getElementById('brewMethod').value,
+    gw: document.getElementById('grindWeight').value,
+    wt: document.getElementById('waterTemp').value,
+    cu: document.getElementById('cupper').value,
+    tc: document.getElementById('taintCups').value,
+    fc: document.getElementById('faultCups').value,
+    n:  document.getElementById('notes').value,
+    sc: ATTRIBUTES.map(a => document.getElementById(a.id).value).join(','),
+    tg: [...document.querySelectorAll('#flavorTags .tag.active')].map(t => t.textContent).join('|'),
+  };
+  return state;
+}
+
+function buildShareURL() {
+  const state = gatherState();
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  // Always use the page's base path, stripping any existing hash or query
+  const base = location.protocol + '//' + location.host + location.pathname;
+  return base + '#d=' + encoded;
+}
+
+function loadFromHash() {
+  try {
+    const hash = location.hash;
+    if (!hash.startsWith('#d=')) return;
+    const encoded = hash.slice(3);
+    const state = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+
+    const setField = (id, v) => {
+      if (v === undefined || v === null) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.value = v;
+    };
+
+    setField('testerName', state.t);
+    setField('beanId', state.b);
+    setField('origin', state.o);
+    setField('process', state.pr);
+    setField('roastLevel', state.rl);
+    setField('roastDate', state.rd);
+    setField('cupDate', state.cd);
+    setField('brewMethod', state.bm);
+    setField('grindWeight', state.gw);
+    setField('waterTemp', state.wt);
+    setField('cupper', state.cu);
+    setField('taintCups', state.tc);
+    setField('faultCups', state.fc);
+    setField('notes', state.n);
+
+    // Scores — set slider value AND update display label
+    if (state.sc) {
+      const scores = state.sc.split(',');
+      ATTRIBUTES.forEach((a, i) => {
+        const val = scores[i];
+        if (val === undefined) return;
+        const el = document.getElementById(a.id);
+        if (el) {
+          el.value = val;
+          updateVal(a.id);
+        }
+      });
+    }
+
+    // Tags — activate matching preset tags, inject custom ones
+    if (state.tg) {
+      const activeTags = state.tg.split('|').filter(Boolean);
+      const presetEls = [...document.querySelectorAll('#flavorTags .tag:not(.custom)')];
+      const presetTexts = presetEls.map(t => t.textContent);
+
+      presetEls.forEach(tag => {
+        if (activeTags.includes(tag.textContent)) tag.classList.add('active');
+      });
+
+      activeTags
+        .filter(tg => !presetTexts.includes(tg))
+        .forEach(tg => {
+          const tag = document.createElement('span');
+          tag.className = 'tag custom active';
+          tag.textContent = tg;
+          tag.onclick = function() { this.classList.toggle('active'); };
+          tag.ondblclick = function() { this.remove(); };
+          document.getElementById('flavorTags').appendChild(tag);
+        });
+    }
+
+    calcTotal();
+  } catch(e) {
+    console.warn('Could not load shared state:', e);
+  }
+}
+
+// ── SHARE MODAL ───────────────────────────────────────────────────────────
+
+function openShareModal() {
+  const url = buildShareURL();
+  document.getElementById('shareUrlBox').textContent = url;
+  const btn = document.getElementById('copyUrlBtn');
+  btn.textContent = 'Copy';
+  btn.classList.remove('copied');
+  document.getElementById('shareModal').classList.add('open');
+}
+
+function copyShareUrl() {
+  const url = document.getElementById('shareUrlBox').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copyUrlBtn');
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
+  }).catch(() => {
+    const el = document.getElementById('shareUrlBox');
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
+}
+
+// ── QR MODAL ──────────────────────────────────────────────────────────────
+
+let qrGenerated = false;
+
+function openQRModal() {
+  const url = buildShareURL();
+  document.getElementById('qrModal').classList.add('open');
+
+  const canvas = document.getElementById('qrCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 220, 220);
+  ctx.fillStyle = '#ccb88a';
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Generating…', 110, 115);
+
+  // Use qrcodejs via a hidden div, then render onto our canvas
+  const tempDiv = document.createElement('div');
+  tempDiv.style.cssText = 'position:absolute;left:-9999px;top:-9999px;';
+  document.body.appendChild(tempDiv);
+
+  try {
+    const qr = new QRCode(tempDiv, {
+      text: url,
+      width: 196,
+      height: 196,
+      colorDark: '#1A0E06',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    // qrcodejs renders synchronously to a canvas element internally
+    const renderAttempt = (attempts) => {
+      const innerCanvas = tempDiv.querySelector('canvas');
+      const innerImg    = tempDiv.querySelector('img');
+      const source = innerCanvas || innerImg;
+      if (source) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 220, 220);
+        ctx.drawImage(source, 12, 12, 196, 196);
+        document.body.removeChild(tempDiv);
+      } else if (attempts > 0) {
+        setTimeout(() => renderAttempt(attempts - 1), 80);
+      } else {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,220,220);
+        ctx.fillStyle = '#1A0E06';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Could not render QR.', 110, 110);
+        document.body.removeChild(tempDiv);
+      }
+    };
+    setTimeout(() => renderAttempt(10), 100);
+  } catch(e) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,220,220);
+    ctx.fillStyle = '#1A0E06';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('QR library unavailable.', 110, 105);
+    ctx.fillText('Use Share Link instead.', 110, 122);
+    if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
+  }
+}
+
+function downloadQR() {
+  const canvas = document.getElementById('qrCanvas');
+  const link = document.createElement('a');
+  link.download = 'cupping-sheet-qr.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) backdrop.classList.remove('open');
+  });
+});
+
+// ── PRINT ─────────────────────────────────────────────────────────────────
+function printSheet() {
+  // Close any open tooltips before printing
+  document.querySelectorAll('.tooltip-box.open').forEach(b => b.classList.remove('open'));
+  window.print();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (location.hash.startsWith('#d=')) {
+    // Loading from shared link — restore state (overrides defaults)
+    loadFromHash();
+  } else {
+    // Fresh load — set today's date as default
+    document.getElementById('cupDate').valueAsDate = new Date();
+  }
+});
+</script>
+</body>
+</html>
